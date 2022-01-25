@@ -119,3 +119,7 @@ gitlab:
     destination: "./gitlab/dougbw1"
 
 ```
+
+# Solution Design
+
+![logo](solution-design.svg)
