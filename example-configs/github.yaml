@@ -1,0 +1,13 @@
+github:
+  - name: github-amido-techops
+    owner: amido
+    cloneMethod: https
+    include: techops
+    destination: ./github/amido/techops
+    cli: true
+
+  - name: github-amido-stacks
+    owner: amido
+    cloneMethod: https
+    include: stacks
+    destination: ./github/amido/stacks

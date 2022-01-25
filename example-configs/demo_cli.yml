@@ -1,0 +1,28 @@
+github:
+  - name: github-dougbw
+    owner: dougbw
+    cloneMethod: https
+    destination: ./github/dougbw/pwsh
+    include: pwsh
+    cli: true
+
+  - name: github-amido-stacks
+    owner: amido
+    cloneMethod: https
+    include: stacks
+    destination: ./github/amido/stacks
+    cli: true
+
+  - name: github-amido-techops
+    owner: amido
+    cloneMethod: https
+    include: techops
+    destination: ./github/amido/techops
+    cli: true
+
+azuredevops:
+  - name: azdo-amido-nhs
+    organization: nhs-scot-covid19bot
+    cloneMethod: ssh
+    destination: ./azdo/nhs
+    cli: true

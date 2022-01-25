@@ -1,0 +1,5 @@
+gitlab:
+  - name: gitlab-dougbw1
+    user: dougbw
+    cloneMethod: https
+    destination: "./gitlab/dougbw1"

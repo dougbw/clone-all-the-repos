@@ -1,0 +1,52 @@
+package filter
+
+import (
+	"clone-all-the-repos/internal/config"
+	"regexp"
+)
+
+func IncludeRepos(pattern string, repos []config.GitRepo) (ret []config.GitRepo) {
+
+	for _, repo := range repos {
+		match, _ := regexp.MatchString(pattern, repo.Name)
+		if match {
+			ret = append(ret, repo)
+		}
+	}
+	return
+}
+
+func ExcludeRepos(pattern string, repos []config.GitRepo) (ret []config.GitRepo) {
+
+	for _, repo := range repos {
+		match, _ := regexp.MatchString(pattern, repo.Name)
+		if !match {
+			ret = append(ret, repo)
+		}
+	}
+	return
+}
+
+func Include(testPattern string, input []string) (ret []string) {
+
+	for _, s := range input {
+		match, _ := regexp.MatchString(testPattern, s)
+
+		if match {
+			ret = append(ret, s)
+		}
+	}
+	return ret
+}
+
+func Exclude(testPattern string, input []string) (ret []string) {
+
+	for _, s := range input {
+		match, _ := regexp.MatchString(testPattern, s)
+
+		if !match {
+			ret = append(ret, s)
+		}
+	}
+	return
+}

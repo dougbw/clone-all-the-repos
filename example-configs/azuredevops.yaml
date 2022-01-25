@@ -1,0 +1,12 @@
+azuredevops:
+
+- name: azdo-dbw
+  organization: dougbw
+  cloneMethod: https
+  include: azure
+
+- name: azdo-stealth
+  organization: dougbw
+  cloneMethod: https
+  include: stealth
+  cli: true
