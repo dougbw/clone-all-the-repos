@@ -1,4 +1,6 @@
 
+![logo](logo.jpg)
+
 # Introduction
 
 `clone-all-the-repos` is a tool written in go which helps organize git repos from Azure DevOps/GitHub/GitLab on your workstation. It is configuration driven and uses API/cli tools to discover remote git repositories, then essentially runs `git clone` in bulk.
