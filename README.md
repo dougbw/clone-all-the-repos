@@ -3,7 +3,7 @@
 
 # Introduction
 
-`clone-all-the-repos` is a tool written in go which helps organize git repos from Azure DevOps/GitHub/GitLab on your workstation. It is configuration driven and uses API/cli tools to discover remote git repositories, then essentially runs `git clone` in bulk.
+`clone-all-the-repos` is a tool written in go which helps organize git repos on your workstation when cloning from Azure DevOps/GitHub/GitLab. It is configuration driven and uses API/cli tools to discover the remote git repositories, then essentially runs `git clone` in bulk, allowing you to mirror the respective remote system structure regarding organizations, projects, etc.
 
 # Installation
 
@@ -49,16 +49,15 @@ Azure DevOps configuration objects are listed within a `azuredevops` key.
 
 
 
-| property | type | allowed values | description  |
-| --- | --- | --- | --- | 
-| name | string | - | free form string - used in logs to show what is currently being processed |
-| organization | string | - | target azure devops organization |
-| cloneMethod | string | `https` or `ssh` | which `git clone` method to use |
-| include | string | - |regex filter to only return matching projects/repos |
-| exclude | string | - | regex filter to hide matching projects/repos |
-| destination | string | - | the local path where repos will be cloned to, relative to the configuration file  |
-| cli | bool | `true` or `false` | optional: flag to set whether az cli is used for discovey process. defaults to `false`<br><br>`true`: The `az` cli must be installed and logged in with `az login`. <br><br>`false`: The `AZDO_PERSONAL_ACCESS_TOKEN` environment variable must be set to a valid [personal access token](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page) |
-|
+| property | type | required | default |  allowed values | description  |
+| --- | --- | --- | --- | --- | --- |
+| name | string | **true** | - | - | free form string - used in logs to show what is currently being processed |
+| organization | string | **true** | - | - | target azure devops organization |
+| cloneMethod | string | **true** | - |`https`<br> `ssh` | which `git clone` method to use |
+| include | string | false | - |- | regex filter to only return matching projects/repos |
+| exclude | string | false  | - | - | regex filter to hide matching projects/repos |
+| destination | string | false  | `./azuredevops/{organization}/{project}` | - | local directory path where repos will be cloned in to, relative to the configuration file |
+| cli | bool | false| false | `true` <br> `false` | flag to set whether az cli or the rest api is used for discovey process. <br><br>`true`: The `az` cli must be installed and logged in with `az login`. <br><br>`false`: The `AZDO_PERSONAL_ACCESS_TOKEN` environment variable must be set to a valid [personal access token](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=preview-page) |
 
 Example configuration:
 ```
@@ -74,16 +73,17 @@ azuredevops:
 
 GitHub configuration objects are listed within a `github` key
 
-| property | type | allowed values | description  |
-| --- | --- | --- | --- | 
-| name | string | - | free form string - used in logs to show what is currently being processed |
-| owner | string | - | target github owner |
-| cloneMethod | string | `https` or `ssh` | which `git clone` method to use |
-| include | string | - |regex filter to only return matching repos |
-| exclude | string | - | regex filter to hide matching repos |
-| destination | string | - | the local path where repos will be cloned to, relative to the configuration file  |
-| cli | bool | `true` or `false` | optional: flag to set whether az cli is used for discovey process defaults to `false`<br><br>`true`: the `gh` cli must be installed and logged in (`gh auth login`).<br><br>`false`: the `GITHUB_TOKEN` must be set to a valid [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)|
-|
+
+| property | type | required | default |  allowed values | description  |
+| --- | --- | --- | --- | --- | --- |
+| name | string | **true** | - | - | free form string - used in logs to show what is currently being processed |
+| owner | string | **true** | - | - | target azure github owner |
+| cloneMethod | string | **true** | - |`https`<br> `ssh` | which `git clone` method to use |
+| include | string | false | - |- | regex filter to only return matching projects/repos |
+| exclude | string | false  | - | - | regex filter to hide matching projects/repos |
+| destination | string | false  | `./github/{owner}/` | - | local directory path where repos will be cloned in to, relative to the configuration file |
+| cli | bool | false| false | `true` <br> `false` | `true:` the `gh` cli must be installed and logged in (`gh auth login`).<br><br>`false:` env var `GITHUB_TOKEN` must be set to a valid [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)|
+
 
 Example configuration:
 ```
@@ -102,13 +102,13 @@ GitLab configuration objects are listed within a `gitlab` key.
 
 This is incomplete and has not been tested thoroughly in comparison to the azdo/github implementations (missing filtering, pagination not implemented).
 
-
-| property | type | allowed values | description  |
-| --- | --- | --- | --- | 
-| name | string | - | free form string - used in logs to show what is currently being processed |
-| user | string | - | target gitlab user |
-| cloneMethod | string | `https` or `ssh` | which `git clone` method to use |
-| destination | string | - | the local path where repos will be cloned to, relative to the configuration file  |
+| property | type | required | default |  allowed values | description  |
+| --- | --- | --- | --- | --- | --- |
+| name | string | **true** | - | - | free form string - used in logs to show what is currently being processed |
+| user | string | **true** | - | - | target gitlab user |
+| cloneMethod | string | **true** | - |`https`<br> `ssh` | which `git clone` method to use |
+| destination | string | false  | `./{group}/{subgroup(s)/{project}` | - | local directory path where repos will be cloned in to, relative to the configuration file |
+| cli | bool | false| false | `true` <br> `false` | `true:` the `gh` cli must be installed and logged in (`gh auth login`).<br><br>`false:` env var `GITHUB_TOKEN` must be set to a valid [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)|
 
 Example configuration:
 ```
