@@ -1,0 +1,40 @@
+name: Go
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - "*"
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # - name: Set up Go
+      #   uses: actions/setup-go@v2
+      #   with:
+      #     go-version: 1.17
+
+      - name: Build
+        run: DOCKER_BUILDKIT=1 docker build --file Dockerfile --output bin . -t clone
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        # if: startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: v0.1.0
+          fail_on_unmatched_files: true
+          files: |
+            bin/clone-all-the-repos_windows_amd64.zip
+            bin/clone-all-the-repos_windows_arm64.zip
+            bin/clone-all-the-repos_linux_amd64.zip
+            bin/clone-all-the-repos_linux_arm64.zip
+            bin/clone-all-the-repos_darwin_amd64.zip
+            bin/clone-all-the-repos_darwin_arm64.zip
+
+      # - name: Test
+      #   run: go test -v ./...

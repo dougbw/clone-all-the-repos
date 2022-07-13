@@ -5,16 +5,50 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch file",
+            "name": "Launch (azuredevops)",
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "cmd\\git-cloner.go",
+            "program": "cmd\\clone-all-the-repos.go",
             "env": {
-                "AZDO_PERSONAL_ACCESS_TOKEN": "put your token here",
-                "GITLAB_TOKEN": "put your token here",
-                "GITHUB_TOKEN": "put your token here"
-            }
+                "AZDO_PERSONAL_ACCESS_TOKEN1": "put your token here",
+                // "http_proxy": "localhost:8888",
+                // "https_proxy": "lcoalhost:8888"
+            },
+            "args": [
+                "..\\example-configs\\azuredevops.yaml"
+            ],
+        },
+        {
+            "name": "Launch (github)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "cmd\\clone-all-the-repos.go",
+            "env": {
+                "GITHUB_TOKEN1": "put your token here"
+                // "http_proxy": "localhost:8888",
+                // "https_proxy": "lcoalhost:8888"
+            },
+            "args": [
+                "..\\example-configs\\github.yaml"
+            ],
+            //  "cwd": "${workspaceRoot}"
+        },
+        {
+            "name": "Launch (gitlab)",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "cmd\\clone-all-the-repos.go",
+            "env": {
+                "GITLAB_TOKEN1": "put your token here",
+                // "http_proxy": "localhost:8888",
+                // "https_proxy": "lcoalhost:8888"
+            },
+            "args": [
+                "..\\example-configs\\gitlab.yaml"
+            ],
         }
     ]
 }

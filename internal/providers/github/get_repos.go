@@ -3,18 +3,13 @@ package github
 import (
 	"clone-all-the-repos/internal/config"
 	"clone-all-the-repos/internal/logger"
-	"fmt"
 	"os"
 	"path"
 )
 
-func GetGitHubRepos(GitHubConfig config.GitHubConfig) (repos []config.GitRepo) {
+func GetRepos(GitHubConfig config.GitHubConfig) (repos []config.GitRepo) {
 
-	loggingContext := []string{
-		"provider:github",
-		fmt.Sprintf("config:%s", GitHubConfig.Name),
-		fmt.Sprintf("owner:%s", GitHubConfig.Owner),
-	}
+	token, _ := os.LookupEnv("GITHUB_TOKEN")
 
 	// set discovery method
 	var discoveryMethod string
@@ -24,20 +19,15 @@ func GetGitHubRepos(GitHubConfig config.GitHubConfig) (repos []config.GitRepo) {
 		discoveryMethod = "api"
 	}
 
-	token, present := os.LookupEnv("GITHUB_TOKEN")
-	if discoveryMethod == "api" && !present {
-		logger.PrintLogMessage(loggingContext, "⛔ required environment variable not set: GITHUB_TOKEN")
-		os.Exit(2)
+	logger.Context = []string{
+		"discovery",
+		"github",
+		GitHubConfig.Name,
+		discoveryMethod,
+		GitHubConfig.Owner,
 	}
 
-	loggingContext = []string{
-		"provider:github",
-		fmt.Sprintf("config:%s", GitHubConfig.Name),
-		fmt.Sprintf("discovery:%s", discoveryMethod),
-		fmt.Sprintf("owner:%s", GitHubConfig.Owner),
-	}
-	message := "🔍 Finding repos"
-	logger.PrintLogMessage(loggingContext, message)
+	logger.Print("🔍 Finding repos...")
 
 	// find list of repos
 	var githubRepos []githubRepo
@@ -66,7 +56,7 @@ func GetGitHubRepos(GitHubConfig config.GitHubConfig) (repos []config.GitRepo) {
 	// save results
 	for _, githubRepo := range githubRepos {
 		var gitRepo = config.GitRepo{
-			Context:     loggingContext,
+			Context:     logger.Context[1:],
 			Name:        githubRepo.Name,
 			HttpsUrl:    githubRepo.Url,
 			SshUrl:      githubRepo.SSHUrl,
@@ -76,14 +66,7 @@ func GetGitHubRepos(GitHubConfig config.GitHubConfig) (repos []config.GitRepo) {
 		repos = append(repos, gitRepo)
 	}
 
-	loggingContext = []string{
-		"provider:github",
-		fmt.Sprintf("config:%s", GitHubConfig.Name),
-		fmt.Sprintf("discovery:%s", discoveryMethod),
-		fmt.Sprintf("owner:%s", GitHubConfig.Owner),
-	}
-	message = fmt.Sprintf("🔍 Found '%d' repos", len(repos))
-	logger.PrintLogMessage(loggingContext, message)
+	logger.Printf("🔍 Found '%d' repos", len(repos))
 
 	return
 

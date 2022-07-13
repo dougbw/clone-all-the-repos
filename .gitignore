@@ -1,2 +1,6 @@
 *.exe
 *credentials*
+*.zip
+example-configs/azuredevops
+example-configs/github
+example-configs/gitlab
