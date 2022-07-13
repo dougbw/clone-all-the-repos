@@ -2,9 +2,7 @@ package github
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"os/exec"
 
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
@@ -61,20 +59,4 @@ func findRepos(owner string, token string) (githubrepos []githubRepo) {
 
 	return
 
-}
-
-func findReposCli(owner string) (githubrepos []githubRepo) {
-
-	out, err := exec.Command("gh", "repo", "list", owner, "--limit", "500", "--json", "name,nameWithOwner,url,sshUrl,defaultBranchRef,isFork,isPrivate").Output()
-	if err != nil {
-		fmt.Printf("%s", err)
-	}
-
-	err = json.Unmarshal(out, &githubrepos)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	return
 }

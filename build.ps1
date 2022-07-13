@@ -2,7 +2,6 @@ Param(
     $Module = "clone-all-the-repos"
 )
 
-
 Clear-Host
 
 $ErrorActionPreference = "Stop"
@@ -19,3 +18,5 @@ go build cmd/clone-all-the-repos.go
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Build failed"
 }
+
+# .\clone-all-the-repos.exe example-configs\github.yaml

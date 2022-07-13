@@ -1,24 +1,22 @@
 package config
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"log"
-	"os"
 
 	"gopkg.in/yaml.v2"
 )
 
 type Root struct {
-	AzureDevOps []AzureDevOpsConfig `json:"azuredevops"`
-	GitHub      []GitHubConfig      `json:"github"`
-	GitLab      []GitLabConfig      `json:"gitlab"`
+	AzureDevOps []AzureDevOpsConfig `yaml:"azuredevops"`
+	GitHub      []GitHubConfig      `yaml:"github"`
+	GitLab      []GitLabConfig      `yaml:"gitlab"`
 }
 
 type AzureDevOpsConfig struct {
-	Name         string `yaml:"name"`
-	Organization string `yaml:"organization"`
-	CloneMethod  string `yaml:"cloneMethod"`
+	Name         string `yaml:"name" validate:"required"`
+	Organization string `yaml:"organization" validate:"required"`
+	CloneMethod  string `yaml:"cloneMethod" validate:"required"`
 	Destination  string `yaml:"destination"`
 	Include      string `yaml:"include,omitempty"`
 	Exclude      string `yaml:"exclude,omitempty"`
@@ -26,9 +24,9 @@ type AzureDevOpsConfig struct {
 }
 
 type GitHubConfig struct {
-	Name        string `yaml:"name"`
-	Owner       string `yaml:"owner"`
-	CloneMethod string `yaml:"cloneMethod"`
+	Name        string `yaml:"name" validate:"required"`
+	Owner       string `yaml:"owner" validate:"required"`
+	CloneMethod string `yaml:"cloneMethod" validate:"required"`
 	Destination string `yaml:"destination"`
 	Include     string `yaml:"include,omitempty"`
 	Exclude     string `yaml:"exclude,omitempty"`
@@ -36,9 +34,9 @@ type GitHubConfig struct {
 }
 
 type GitLabConfig struct {
-	Name        string `yaml:"name"`
-	User        string `yaml:"user"`
-	CloneMethod string `yaml:"cloneMethod"`
+	Name        string `yaml:"name" validate:"required"`
+	User        string `yaml:"user" validate:"required"`
+	CloneMethod string `yaml:"cloneMethod" validate:"required"`
 	Destination string `yaml:"destination"`
 	Include     string `yaml:"include,omitempty"`
 	Exclude     string `yaml:"exclude,omitempty"`
@@ -53,34 +51,19 @@ type GitRepo struct {
 	Context     []string `json:"context,omitempty"`
 }
 
-func Open(configfilePath string) Root {
-
-	jsonFile, err := os.Open(configfilePath)
-	defer jsonFile.Close()
-
-	if err != nil {
-		//fmt.Println(err)
-		panic(err)
-	}
-
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-	var config Root
-	json.Unmarshal(byteValue, &config)
-	return config
-
-}
-
-func OpenYaml(configfilePath string) (config Root) {
+func Parse(configfilePath string) (config Root, err error) {
 
 	yamlFile, err := ioutil.ReadFile(configfilePath)
 	if err != nil {
-		panic(err)
-	}
-	err = yaml.Unmarshal(yamlFile, &config)
-	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
+		return config, err
 	}
 
-	return config
+	err = yaml.UnmarshalStrict(yamlFile, &config)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+		return config, err
+	}
+
+	return config, nil
 
 }

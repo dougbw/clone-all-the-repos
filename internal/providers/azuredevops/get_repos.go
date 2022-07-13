@@ -3,18 +3,11 @@ package azuredevops
 import (
 	"clone-all-the-repos/internal/config"
 	"clone-all-the-repos/internal/logger"
-	"fmt"
 	"os"
 	"path"
 )
 
-func GetAzureDevOpsRepos(AzureDevOpsConfig config.AzureDevOpsConfig) (Repos []config.GitRepo) {
-
-	loggingContext := []string{
-		"provider:azuredevops",
-		fmt.Sprintf("config:%s", AzureDevOpsConfig.Name),
-		fmt.Sprintf("org:%s", AzureDevOpsConfig.Organization),
-	}
+func GetRepos(AzureDevOpsConfig config.AzureDevOpsConfig) (Repos []config.GitRepo) {
 
 	// set discovery method
 	var discoveryMethod string
@@ -24,27 +17,16 @@ func GetAzureDevOpsRepos(AzureDevOpsConfig config.AzureDevOpsConfig) (Repos []co
 		discoveryMethod = "api"
 	}
 
-	// check for environment variable
-	var token string
-	var present bool
-	token, present = os.LookupEnv("AZDO_PERSONAL_ACCESS_TOKEN")
-	if discoveryMethod == "api" && !present {
-		logger.PrintLogMessage(loggingContext, "⛔ required environment variable not set: AZDO_PERSONAL_ACCESS_TOKEN")
-		os.Exit(2)
+	logger.Context = []string{
+		"discovery",
+		"azuredevops",
+		AzureDevOpsConfig.Name,
+		discoveryMethod,
+		AzureDevOpsConfig.Organization,
 	}
+	logger.Print("🔍 Finding projects...")
 
-	// checks for az cli
-	// * is present
-	// * is logged in
-
-	loggingContext = []string{
-		"provider:azuredevops",
-		fmt.Sprintf("config:%s", AzureDevOpsConfig.Name),
-		fmt.Sprintf("discovery:%s", discoveryMethod),
-		fmt.Sprintf("org:%s", AzureDevOpsConfig.Organization),
-	}
-	message := "🔍 Finding projects..."
-	logger.PrintLogMessage(loggingContext, message)
+	token, _ := os.LookupEnv("AZDO_PERSONAL_ACCESS_TOKEN")
 
 	// find projects
 	var projects []project
@@ -62,17 +44,21 @@ func GetAzureDevOpsRepos(AzureDevOpsConfig config.AzureDevOpsConfig) (Repos []co
 		projects = filterExcludeProjects(AzureDevOpsConfig.Exclude, projects)
 	}
 
-	loggingContext = []string{
-		"provider:azuredevops",
-		fmt.Sprintf("config:%s", AzureDevOpsConfig.Name),
-		fmt.Sprintf("discovery:%s", discoveryMethod),
-		fmt.Sprintf("org:%s", AzureDevOpsConfig.Organization),
-	}
-	message = fmt.Sprintf("🔍 Found '%d' projects", len(projects))
-	logger.PrintLogMessage(loggingContext, message)
+	logger.Printf("🔍 Found '%d' projects", len(projects))
 
 	// find repos
 	for _, project := range projects {
+
+		logger.Context = []string{
+			"discovery",
+			"azuredevops",
+			AzureDevOpsConfig.Name,
+			discoveryMethod,
+			AzureDevOpsConfig.Organization,
+			project.Name,
+		}
+
+		logger.Print("🔍 Finding repos...")
 
 		// list repos in project
 		var repos []repo
@@ -90,15 +76,7 @@ func GetAzureDevOpsRepos(AzureDevOpsConfig config.AzureDevOpsConfig) (Repos []co
 			repos = filterExcludeRepos(AzureDevOpsConfig.Exclude, repos)
 		}
 
-		loggingContext = []string{
-			"provider:azuredevops",
-			fmt.Sprintf("config:%s", AzureDevOpsConfig.Name),
-			fmt.Sprintf("discovery:%s", discoveryMethod),
-			fmt.Sprintf("org:%s", AzureDevOpsConfig.Organization),
-			fmt.Sprintf("project:%s", project.Name),
-		}
-		message = fmt.Sprintf("🔍 Found '%d' repos", len(repos))
-		logger.PrintLogMessage(loggingContext, message)
+		logger.Printf("🔍 Found '%d' repos", len(repos))
 
 		// set clone path
 		var destination string
@@ -116,7 +94,7 @@ func GetAzureDevOpsRepos(AzureDevOpsConfig config.AzureDevOpsConfig) (Repos []co
 			}
 
 			var GitRepo = config.GitRepo{
-				Context:     loggingContext,
+				Context:     logger.Context[1:],
 				Name:        repo.Name,
 				HttpsUrl:    repo.RemoteURL,
 				SshUrl:      repo.SSHURL,

@@ -103,19 +103,18 @@ func getUserProjects(bearer string, userId int) (projects GitLabUserProject) {
 	return
 }
 
-func GetGitLabRepos(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
+func GetRepos(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
 
-	loggingContext := []string{
+	logger.Context = []string{
 		"provider:gitlab",
 		fmt.Sprintf("config:%s", GitLabConfig.Name),
 		fmt.Sprintf("user:%s", GitLabConfig.User),
 	}
-	message := "🔍 Finding projects"
-	logger.PrintLogMessage(loggingContext, message)
+	logger.Print("🔍 Finding projects")
 
 	token, present := os.LookupEnv("GITLAB_TOKEN")
 	if !present {
-		logger.PrintLogMessage(loggingContext, "⛔ required environment variable not set: GITLAB_TOKEN")
+		logger.Print("⛔ required environment variable not set: GITLAB_TOKEN")
 		os.Exit(2)
 	}
 
@@ -137,7 +136,7 @@ func GetGitLabRepos(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
 		}
 
 		var GitRepo = config.GitRepo{
-			Context:     loggingContext,
+			Context:     logger.Context,
 			Name:        project.Name,
 			HttpsUrl:    httpsUrl,
 			SshUrl:      project.SSHURLToRepo,
@@ -148,24 +147,22 @@ func GetGitLabRepos(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
 	}
 
 	// find groups
-	loggingContext = []string{
+	logger.Context = []string{
 		"provider:gitlab",
 		fmt.Sprintf("config:%s", GitLabConfig.Name),
 		fmt.Sprintf("user:%s", GitLabConfig.User),
 	}
-	message = "🔍 Finding groups"
-	logger.PrintLogMessage(loggingContext, message)
+	logger.Print("🔍 Finding groups")
 	groups := getGroups(bearer)
 	for _, group := range groups {
 
-		loggingContext := []string{
+		logger.Context = []string{
 			"provider:gitlab",
 			fmt.Sprintf("config:%s", GitLabConfig.Name),
 			fmt.Sprintf("user:%s", GitLabConfig.User),
 			fmt.Sprintf("group:%s", group.Name),
 		}
-		message := "🔍 Finding projects in group"
-		logger.PrintLogMessage(loggingContext, message)
+		logger.Print("🔍 Finding projects in group")
 
 		// find group projects
 		groupProjects := getGroupProjects(bearer, group.ID)
@@ -184,7 +181,7 @@ func GetGitLabRepos(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
 			destinationDir, _ := filepath.Split(destination)
 
 			var GitRepo = config.GitRepo{
-				Context:     loggingContext,
+				Context:     logger.Context,
 				Name:        project.Name,
 				HttpsUrl:    httpsUrl,
 				SshUrl:      project.SSHURLToRepo,

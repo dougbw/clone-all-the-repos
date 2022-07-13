@@ -7,12 +7,14 @@ import (
 	"github.com/fatih/color"
 )
 
+var Context []string
+
 func lookup(a int, b int) (ret int) {
 	ret = (a + b) % b
 	return
 }
 
-func PrintLogMessage(context []string, message string) {
+func Print(message string) {
 
 	colors := []color.Attribute{
 		color.FgBlue,
@@ -30,10 +32,14 @@ func PrintLogMessage(context []string, message string) {
 
 	fmt.Print("[")
 
-	for index, s := range context {
+	for index, s := range Context {
 		colorIndex := lookup(index, length)
 		color.Set(colors[colorIndex])
-		fmt.Print(s + "/")
+		if len(Context) > 1 {
+			fmt.Print(s + "/")
+		} else {
+			fmt.Print(s)
+		}
 	}
 
 	color.Set(color.FgWhite)
@@ -41,7 +47,12 @@ func PrintLogMessage(context []string, message string) {
 
 }
 
-func PrintErrMessage(context []string, message string) {
+func Printf(message string, v ...any) {
+	formatted := fmt.Sprintf(message, v...)
+	Print((formatted))
+}
+
+func PrintErr(message string) {
 
 	colors := []color.Attribute{
 		color.FgBlue,
@@ -59,17 +70,27 @@ func PrintErrMessage(context []string, message string) {
 
 	fmt.Print("[")
 
-	for index, s := range context {
+	for index, s := range Context {
 		colorIndex := lookup(index, length)
 		color.Set(colors[colorIndex])
-		fmt.Print(s + "/")
+		if len(Context) > 1 {
+			fmt.Print(s + "/")
+		} else {
+			fmt.Print(s)
+		}
 	}
 
 	color.Set(color.FgWhite)
+	color.Set(color.FgRed)
 	fmt.Print("] ")
 
 	color.Set(color.FgRed)
 	fmt.Println(message)
 	os.Exit(1)
 
+}
+
+func PrintErrf(message string, v ...any) {
+	formatted := fmt.Sprintf(message, v...)
+	PrintErr((formatted))
 }

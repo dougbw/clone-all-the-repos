@@ -33,7 +33,7 @@ type projectCliResponse struct {
 
 func listProjects(token string, org string) (projects []project) {
 
-	loggingContext := []string{
+	logger.Context = []string{
 		"provider:azuredevops",
 		"discovery:api",
 		fmt.Sprintf("org:%s", org),
@@ -56,8 +56,7 @@ func listProjects(token string, org string) (projects []project) {
 		}
 
 		if resp.StatusCode != 200 {
-			message := fmt.Sprintf("Unexpected status code in response: %s", resp.Status)
-			logger.PrintErrMessage(loggingContext, message)
+			logger.PrintErrf("Unexpected status code in response: %s", resp.Status)
 		}
 
 		// parse

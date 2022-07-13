@@ -3,10 +3,5 @@ azuredevops:
 - name: azdo-dbw
   organization: dougbw
   cloneMethod: https
-  include: azure
-
-- name: azdo-stealth
-  organization: dougbw
-  cloneMethod: https
-  include: stealth
+  include: Azure|azure
   cli: true
