@@ -3,7 +3,7 @@ github:
 - name: github-dougbw
   owner: dougbw
   cloneMethod: https
-  include: pwsh
+  include: ^clone-all-the-repos$
   cli: true
 
 - name: github-hashicorp
