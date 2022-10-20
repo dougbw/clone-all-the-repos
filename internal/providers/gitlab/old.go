@@ -82,7 +82,7 @@ func getGroupProjects(bearer string, groupId int) (projects GitLabGroupProject) 
 	return
 }
 
-func getUserProjects(bearer string, userId int) (projects GitLabUserProject) {
+func getUserProjects(bearer string, userId int) (projects []gitLabUserProject) {
 
 	client := &http.Client{}
 	uri := fmt.Sprintf("https://gitlab.com/api/v4/users/%d/projects/", userId)
@@ -103,7 +103,7 @@ func getUserProjects(bearer string, userId int) (projects GitLabUserProject) {
 	return
 }
 
-func GetRepos(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
+func GetRepos1(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
 
 	logger.Context = []string{
 		"provider:gitlab",
@@ -119,6 +119,9 @@ func GetRepos(GitLabConfig config.GitLabConfig) (Repos []config.GitRepo) {
 	}
 
 	bearer := fmt.Sprintf("Bearer %s", token)
+
+	allProjects := getProjects(bearer)
+	fmt.Print(allProjects)
 
 	// get user ID
 	userId := getUserId(bearer, GitLabConfig.User)

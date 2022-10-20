@@ -31,8 +31,8 @@ func DiscoveryCommand(startup Startup) (repos []config.GitRepo) {
 
 	// gitlab
 	for _, GitLabConfig := range configuration.GitLab {
-		var GitHubRepos = gitlab.GetRepos(GitLabConfig)
-		repos = append(repos, GitHubRepos...)
+		var GitLabRepos = gitlab.GetRepos(GitLabConfig)
+		repos = append(repos, GitLabRepos...)
 	}
 
 	return repos
