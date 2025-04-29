@@ -4,3 +4,5 @@
 example-configs/azuredevops
 example-configs/github
 example-configs/gitlab
+
+.DS_Store
