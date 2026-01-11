@@ -50,7 +50,7 @@ func GetRepos(GitHubConfig config.GitHubConfig) (repos []config.GitRepo) {
 		githubRepos = filterIncludeRepos(GitHubConfig.Include, githubRepos)
 	}
 	if GitHubConfig.Exclude != "" {
-		githubRepos = filterExcludeRepos(GitHubConfig.Include, githubRepos)
+		githubRepos = filterExcludeRepos(GitHubConfig.Exclude, githubRepos)
 	}
 
 	// save results
